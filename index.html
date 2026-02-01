@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>McKinley Lab</title>
+  <meta name="description" content="A tidy gallery of experiments, demos, and tools." />
+  <style>
+    :root{
+      --paper:#fbf3e6;
+      --ink:#1f1a17;
+      --muted:#6a5c53;
+      --accent:#d65a31;   /* warm terracotta */
+      --accent2:#2a6f97;  /* museum-blue */
+      --card:#fff7ec;
+      --line:#d8c8b7;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color:var(--ink);
+      background:
+        radial-gradient(1100px 700px at 20% -20%, rgba(214,90,49,.10), transparent 55%),
+        radial-gradient(900px 600px at 110% 10%, rgba(42,111,151,.12), transparent 60%),
+        linear-gradient(180deg, var(--paper), #f7ead9);
+    }
+
+    .wrap{max-width:1100px;margin:0 auto;padding:32px 18px 60px}
+
+    header{
+      border:2px solid var(--line);
+      background: rgba(255,247,236,.7);
+      border-radius: var(--radius);
+      padding:22px 22px 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    header:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:
+        repeating-linear-gradient(90deg,
+          rgba(214,90,49,.12) 0px,
+          rgba(214,90,49,.12) 18px,
+          rgba(255,255,255,0) 18px,
+          rgba(255,255,255,0) 36px);
+      opacity:.35;
+      pointer-events:none;
+      mix-blend-mode:multiply;
+    }
+
+    .titleRow{
+      display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;
+      position:relative;
+    }
+    .brand{
+      display:flex;gap:14px;align-items:center;
+    }
+    .seal{
+      width:54px;height:54px;border-radius:16px;
+      border:2px solid var(--ink);
+      background: linear-gradient(135deg, rgba(214,90,49,.22), rgba(42,111,151,.18));
+      display:grid;place-items:center;
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+      flex:0 0 auto;
+    }
+    .seal span{
+      font-family: var(--mono);
+      font-weight:700;
+      letter-spacing:.08em;
+      font-size:14px;
+    }
+
+    h1{margin:0;font-size:26px;letter-spacing:.02em}
+    .subtitle{
+      margin:6px 0 0;
+      color:var(--muted);
+      line-height:1.35;
+      max-width:62ch;
+    }
+
+    .meta{
+      text-align:right;
+      font-family:var(--mono);
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .controls{
+      margin-top:16px;
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      position:relative;
+    }
+
+    .search{
+      flex:1 1 360px;
+      display:flex;gap:10px;align-items:center;
+      border:2px solid var(--line);
+      background: rgba(255,255,255,.55);
+      border-radius: 999px;
+      padding:10px 12px;
+    }
+    .search input{
+      width:100%;
+      border:0;
+      outline:0;
+      background: transparent;
+      font-size:14px;
+      color:var(--ink);
+    }
+    .pill{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px dashed rgba(31,26,23,.35);
+      color:var(--muted);
+      background: rgba(255,247,236,.55);
+      white-space:nowrap;
+    }
+
+    .tags{
+      display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
+      flex: 0 1 auto;
+    }
+    .tagBtn{
+      border:2px solid var(--line);
+      background: rgba(255,247,236,.65);
+      border-radius: 999px;
+      padding:7px 10px;
+      font-size:12px;
+      cursor:pointer;
+      transition: transform .04s ease, background .15s ease;
+      user-select:none;
+    }
+    .tagBtn:hover{transform: translateY(-1px)}
+    .tagBtn[aria-pressed="true"]{
+      background: rgba(214,90,49,.18);
+      border-color: rgba(214,90,49,.55);
+    }
+
+    main{margin-top:20px}
+
+    .section{
+      margin-top:22px;
+      border:2px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,247,236,.55);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .sectionHead{
+      display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;
+      padding:14px 16px;
+      border-bottom:2px solid var(--line);
+      background: rgba(255,255,255,.35);
+    }
+    .sectionHead h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-family: var(--mono);
+    }
+    .sectionHead .count{
+      font-family: var(--mono);
+      font-size:12px;color:var(--muted);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+      padding:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns: repeat(2,1fr);} }
+    @media (max-width: 620px){ .grid{grid-template-columns: 1fr;} }
+
+    .card{
+      border:2px solid var(--ink);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+      padding:14px 14px 12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;inset:-2px;
+      background:
+        radial-gradient(300px 200px at 10% 10%, rgba(214,90,49,.14), transparent 55%),
+        radial-gradient(260px 180px at 110% 40%, rgba(42,111,151,.14), transparent 60%);
+      opacity:.8;
+      pointer-events:none;
+      mix-blend-mode:multiply;
+    }
+
+    .cardTop{display:flex;justify-content:space-between;gap:10px;position:relative}
+    .name{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.02em;
+    }
+    .badge{
+      font-family: var(--mono);
+      font-size:11px;
+      padding:6px 8px;
+      border-radius: 999px;
+      border:2px solid var(--ink);
+      background: rgba(255,255,255,.35);
+      white-space:nowrap;
+      align-self:flex-start;
+    }
+    .desc{
+      margin:8px 0 10px;
+      color:var(--muted);
+      line-height:1.35;
+      min-height: 2.7em;
+      position:relative;
+    }
+    .chips{display:flex;gap:6px;flex-wrap:wrap;position:relative}
+    .chip{
+      font-family: var(--mono);
+      font-size:11px;
+      padding:5px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(31,26,23,.25);
+      background: rgba(255,255,255,.45);
+      color:rgba(31,26,23,.85);
+    }
+    .actions{
+      margin-top:12px;
+      display:flex;gap:8px;justify-content:space-between;align-items:center;
+      position:relative;
+    }
+    a.btn{
+      text-decoration:none;
+      display:inline-flex;align-items:center;justify-content:center;
+      gap:8px;
+      padding:9px 10px;
+      border-radius: 12px;
+      border:2px solid var(--ink);
+      color:var(--ink);
+      background: rgba(255,255,255,.55);
+      font-size:12px;
+      font-family: var(--mono);
+      width:100%;
+      transition: transform .04s ease, background .15s ease;
+    }
+    a.btn:hover{transform: translateY(-1px); background: rgba(214,90,49,.15);}
+    a.btn.secondary:hover{background: rgba(42,111,151,.15);}
+
+    footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-family: var(--mono);
+      font-size:12px;
+      text-align:center;
+      opacity:.9;
+    }
+
+    .hidden{display:none !important;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="titleRow">
+        <div class="brand">
+          <div class="seal"><span>MM</span></div>
+          <div>
+            <h1>McKinley Lab</h1>
+            <p class="subtitle">
+              A tidy gallery of experiments, demos, and automations. Everything here is built to be
+              small, sharp, and a little bit strange.
+            </p>
+          </div>
+        </div>
+        <div class="meta">
+          <div id="utcStamp"></div>
+          <div class="pill">routing hub · lab.mckinleymedia.com</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="search" title="Search by name, description, or tags">
+          <span style="font-family:var(--mono);font-size:12px;color:var(--muted)">SEARCH</span>
+          <input id="q" placeholder="type: ai, rag, demo, workflow, agent…" autocomplete="off" />
+        </div>
+        <div class="tags" id="tagBar"></div>
+      </div>
+    </header>
+
+    <main id="content"></main>
+
+    <footer>
+      “Keep it symmetrical.” · If something 404s, it’s probably mid-experiment.
+    </footer>
+  </div>
+
+  <script>
+    // --- EDIT HERE: your catalog ---
+    const sections = [
+      {
+        title: "Core Services",
+        items: [
+          {
+            name: "n8n",
+            kind: "automation",
+            url: "https://n8n.lab.mckinleymedia.com",
+            desc: "Workflow engine for glue code, agents, and little useful robots.",
+            tags: ["workflow", "automation", "ai"]
+          },
+          {
+            name: "Coolify",
+            kind: "control",
+            url: "https://coolify.lab.mckinleymedia.com",
+            desc: "Deployment dashboard. Not for the public—just the stage manager.",
+            tags: ["ops", "deploy"]
+          }
+        ]
+      },
+      {
+        title: "AI Tools",
+        items: [
+          {
+            name: "Prompt Cabinet",
+            kind: "tool",
+            url: "https://prompt.lab.mckinleymedia.com",
+            desc: "Saved prompts, versions, and evaluation notes.",
+            tags: ["ai", "prompts", "notes"]
+          },
+          {
+            name: "RAG Sketchpad",
+            kind: "demo",
+            url: "https://rag.lab.mckinleymedia.com",
+            desc: "A tiny retrieval playground with citations and experiments.",
+            tags: ["ai", "rag", "search"]
+          }
+        ]
+      },
+      {
+        title: "Demos & Experiments",
+        items: [
+          {
+            name: "UI Pattern Gallery",
+            kind: "demo",
+            url: "https://ui.lab.mckinleymedia.com",
+            desc: "Reusable components and interaction patterns.",
+            tags: ["ui", "design", "demo"]
+          },
+          {
+            name: "Agent Sandbox",
+            kind: "experiment",
+            url: "https://agent.lab.mckinleymedia.com",
+            desc: "Tool-calling experiments and multi-step workflows.",
+            tags: ["ai", "agent", "experiment"]
+          }
+        ]
+      }
+    ];
+
+    // --- render helpers ---
+    const allItems = sections.flatMap(s => s.items.map(i => ({...i, section: s.title})));
+    const allTags = Array.from(new Set(allItems.flatMap(i => i.tags))).sort((a,b)=>a.localeCompare(b));
+
+    const state = { q: "", tags: new Set() };
+
+    function el(tag, attrs={}, children=[]) {
+      const n = document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v]) => {
+        if (k === "class") n.className = v;
+        else if (k.startsWith("on") && typeof v === "function") n.addEventListener(k.slice(2), v);
+        else if (v !== undefined && v !== null) n.setAttribute(k, v);
+      });
+      children.forEach(c => n.appendChild(typeof c === "string" ? document.createTextNode(c) : c));
+      return n;
+    }
+
+    function matches(item) {
+      const q = state.q.trim().toLowerCase();
+      const text = (item.name + " " + item.desc + " " + item.tags.join(" ") + " " + item.kind + " " + item.section).toLowerCase();
+
+      const qOk = !q || text.includes(q);
+
+      const tagsOk = state.tags.size === 0 || Array.from(state.tags).every(t => item.tags.includes(t));
+
+      return qOk && tagsOk;
+    }
+
+    function renderTagBar() {
+      const bar = document.getElementById("tagBar");
+      bar.innerHTML = "";
+
+      const btnAll = el("button", {
+        class: "tagBtn",
+        "aria-pressed": state.tags.size === 0 ? "true" : "false",
+        onclick: () => { state.tags.clear(); renderAll(); }
+      }, ["ALL"]);
+      bar.appendChild(btnAll);
+
+      allTags.forEach(t => {
+        const b = el("button", {
+          class: "tagBtn",
+          "aria-pressed": state.tags.has(t) ? "true" : "false",
+          onclick: () => {
+            if (state.tags.has(t)) state.tags.delete(t);
+            else state.tags.add(t);
+            renderAll();
+          }
+        }, [t.toUpperCase()]);
+        bar.appendChild(b);
+      });
+    }
+
+    function card(item) {
+      const chipRow = el("div", { class: "chips" }, item.tags.map(t => el("span", { class:"chip" }, [t])));
+      const header = el("div", { class:"cardTop" }, [
+        el("h3", { class:"name" }, [item.name]),
+        el("span", { class:"badge", title: item.kind }, [item.kind.toUpperCase()])
+      ]);
+
+      const primary = el("a", { class:"btn", href: item.url, target:"_blank", rel:"noopener" }, ["OPEN ↗"]);
+      const secondary = el("a", { class:"btn secondary", href: "#", onclick: (e)=>{e.preventDefault(); navigator.clipboard.writeText(item.url); secondary.textContent="COPIED ✓"; setTimeout(()=>secondary.textContent="COPY LINK", 900);} }, ["COPY LINK"]);
+
+      return el("div", { class:"card" }, [
+        header,
+        el("p", { class:"desc" }, [item.desc]),
+        chipRow,
+        el("div", { class:"actions" }, [primary, secondary])
+      ]);
+    }
+
+    function sectionBlock(title, items) {
+      const visible = items.filter(matches);
+      const block = el("section", { class:"section" }, [
+        el("div", { class:"sectionHead" }, [
+          el("h2", {}, [title]),
+          el("div", { class:"count" }, [`${visible.length} shown`])
+        ]),
+        el("div", { class:"grid" }, visible.map(card))
+      ]);
+      if (visible.length === 0) block.classList.add("hidden");
+      return block;
+    }
+
+    function renderAll() {
+      renderTagBar();
+
+      const root = document.getElementById("content");
+      root.innerHTML = "";
+
+      sections.forEach(s => root.appendChild(sectionBlock(s.title, s.items)));
+
+      // Update "ALL" pressed state after any change
+      const allBtn = document.querySelector(".tagBtn");
+      if (allBtn) allBtn.setAttribute("aria-pressed", state.tags.size === 0 ? "true" : "false");
+    }
+
+    // --- wire up search ---
+    const q = document.getElementById("q");
+    q.addEventListener("input", (e) => {
+      state.q = e.target.value;
+      renderAll();
+    });
+
+    // --- timestamp ---
+    const now = new Date();
+    document.getElementById("utcStamp").textContent =
+      "UPDATED · " + now.toUTCString().replace("GMT", "UTC");
+
+    renderAll();
+  </script>
+</body>
+</html>
